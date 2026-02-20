@@ -6,7 +6,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
+# Este decorador está diseñado específicamente para vistas basadas en clase de DRF.
+# Notar que la función wrapper recibe 'self' (la instancia de la vista) y 'request'.
 def rol_obligatorio(roles_permitidos=None):
     """
     Decorador para restringir acceso basado en roles.
@@ -28,7 +29,7 @@ def rol_obligatorio(roles_permitidos=None):
         roles_permitidos = []
 
     def decorator(view_func):
-        @wraps(view_func)
+        @wraps(view_func)  # Mantiene los metadatos de la función original (nombre, docstring, etc.)
         def wrapper(self, request, *args, **kwargs):
             # Verificar si el usuario está autenticado
             if not request.user or not request.user.is_authenticated:
@@ -38,7 +39,8 @@ def rol_obligatorio(roles_permitidos=None):
                     status=status.HTTP_401_UNAUTHORIZED
                 )
             
-            # Verificar si el usuario tiene rol
+            # Verificar si el usuario tiene rol asignado
+            # Esto es importante porque nuestro modelo permite usuarios sin rol (null=True)
             if not hasattr(request.user, 'rol_usuario') or not request.user.rol_usuario:
                 logger.warning(f"Usuario {request.user.username} no tiene rol asignado")
                 return Response(
@@ -46,7 +48,7 @@ def rol_obligatorio(roles_permitidos=None):
                     status=status.HTTP_403_FORBIDDEN
                 )
             
-            # Verificar si el rol está en los permitidos
+            # Verificar si el rol del usuario está en la lista de permitidos
             rol_usuario = request.user.rol_usuario.name
             if rol_usuario not in roles_permitidos:
                 logger.warning(
@@ -69,7 +71,8 @@ def rol_obligatorio(roles_permitidos=None):
     return decorator
 
 
-# Versión simplificada para usar en vistas basadas en función
+# Versión simplificada para usar en vistas basadas en función.
+# No recibe 'self' porque no hay instancia de clase.
 def rol_obligatorio_func(roles_permitidos=None):
     """
     Versión del decorador para vistas basadas en función.

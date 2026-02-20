@@ -18,12 +18,13 @@ class LoginView(APIView):
     Acepta username/email + password y retorna tokens JWT + datos del usuario.
     Permite acceso sin autenticación (AllowAny).
     """
+    # AllowAny es crucial aquí: si no, nadie podría hacer login porque ya pediría autenticación.
     permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = LoginSerializer(
             data=request.data, 
-            context={'request': request}
+            context={'request': request}  # Pasamos el request para que el serializer pueda usarlo si es necesario
         )
         
         if serializer.is_valid():
@@ -40,6 +41,7 @@ class LoginView(APIView):
             }
             
             # Opcional: Crear sesión en Django (si se necesita para admin)
+            # Esto es útil si mezclamos JWT con el panel de admin de Django.
             login(request, user)
             
             logger.info(f"Login exitoso: {user.username} ({user.rol_usuario.name})")

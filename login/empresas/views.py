@@ -4,6 +4,7 @@ from rest_framework import status
 from usuarios.decorators import rol_obligatorio
 import logging
 
+# Configuramos el logger para auditoría y depuración.
 logger = logging.getLogger(__name__)
 
 
@@ -12,11 +13,15 @@ class EmpresaDashboardView(APIView):
     Vista de ejemplo para el dashboard de empresas.
     Solo accesible para usuarios con rol 'Empresa' o 'Admin'.
     """
-    
+    # El decorador @rol_obligatorio es personalizado y verifica que el usuario
+    # autenticado tenga uno de los roles especificados en la lista.
+    # Aquí permitimos tanto a 'Empresa' como a 'Admin'. Esto es útil porque
+    # quizás un admin necesita ver el dashboard de una empresa para depurar o asistir.
     @rol_obligatorio(roles_permitidos=["Empresa", "Admin"])
     def get(self, request):
         """
         Retorna información básica del dashboard de la empresa.
+        Por ahora son datos de ejemplo (mock), pero en el futuro vendrán de la BD.
         """
         data = {
             "mensaje": "Bienvenido al dashboard de empresa",
@@ -47,8 +52,8 @@ class OfertasEmpresaView(APIView):
     
     @rol_obligatorio(roles_permitidos=["Empresa", "Admin"])
     def get(self, request):
-        """Listar ofertas"""
-        # Simulación de datos
+        """Listar ofertas (datos simulados por ahora)"""
+        # Simulación de datos. Esto es un placeholder hasta que tengamos el modelo Oferta.
         ofertas = [
             {"id": 1, "titulo": "Desarrollador Django", "estado": "activa"},
             {"id": 2, "titulo": "Frontend React", "estado": "activa"},
@@ -59,7 +64,7 @@ class OfertasEmpresaView(APIView):
     @rol_obligatorio(roles_permitidos=["Empresa", "Admin"])
     def post(self, request):
         """Crear nueva oferta"""
-        # Aquí iría la lógica para crear oferta
+        # Aquí iría la lógica para crear oferta, validar datos, guardar en BD, etc.
         return Response(
             {"mensaje": "Oferta creada exitosamente"},
             status=status.HTTP_201_CREATED

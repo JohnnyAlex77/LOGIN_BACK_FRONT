@@ -19,6 +19,7 @@ class EstudianteDashboardView(APIView):
     def get(self, request):
         """
         Retorna información básica del dashboard del estudiante.
+        Datos mock por ahora.
         """
         data = {
             "mensaje": "Bienvenido al dashboard de estudiante",
@@ -45,21 +46,25 @@ class EstudianteDashboardView(APIView):
 class PerfilEstudianteView(APIView):
     """
     Vista para ver/editar perfil de estudiante.
+    A diferencia del dashboard, esta vista ya interactúa con datos reales del usuario.
     """
     
     @rol_obligatorio(roles_permitidos=["Estudiante", "Admin"])
     def get(self, request):
-        """Obtener perfil del estudiante"""
+        """Obtener perfil del estudiante (datos reales del usuario autenticado)"""
         serializer = UsuarioSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @rol_obligatorio(roles_permitidos=["Estudiante", "Admin"])
     def patch(self, request):
-        """Actualizar perfil parcialmente"""
+        """
+        Actualizar perfil parcialmente.
+        Usamos PATCH porque permite enviar solo los campos que se quieren modificar.
+        """
         serializer = UsuarioSerializer(
             request.user, 
             data=request.data, 
-            partial=True
+            partial=True  # partial=True indica que no todos los campos son obligatorios
         )
         if serializer.is_valid():
             serializer.save()
