@@ -7,15 +7,17 @@ import UserManagement from './UserManagement';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('overview'); // Pestaña activa por defecto
 
+  // Manejar cierre de sesión
   const handleLogout = async () => {
     await logout();
-    window.location.href = '/login';
+    window.location.href = '/login'; // Redirección completa, no solo navigate
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Header con información del usuario y botón de logout */}
       <header className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -33,6 +35,7 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Sistema de pestañas para organizar el contenido */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Resumen</TabsTrigger>
@@ -40,6 +43,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="stats">Estadísticas</TabsTrigger>
           </TabsList>
 
+          {/* Pestaña de resumen con tarjetas de métricas */}
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
@@ -92,10 +96,12 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Pestaña de gestión de usuarios - componente separado */}
           <TabsContent value="users">
             <UserManagement />
           </TabsContent>
 
+          {/* Pestaña de estadísticas - en desarrollo */}
           <TabsContent value="stats">
             <Card>
               <CardHeader>

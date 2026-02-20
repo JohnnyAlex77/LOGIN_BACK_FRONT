@@ -32,23 +32,23 @@ import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Loader2, Search, UserPlus, Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const UserManagement = () => {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser } = useAuth(); // Usuario actual para evitar auto-eliminación
   
-  // Estados
+  // Estados principales
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   
-  // Filtros
+  // Filtros de búsqueda
   const [filters, setFilters] = useState({
     search: '',
-    rol: 'all',
-    activo: undefined
+    rol: 'all',      // 'all' significa todos los roles
+    activo: undefined // undefined = todos, true = activos, false = inactivos
   });
   
-  // Modal de usuario
+  // Modal de creación/edición
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -64,11 +64,11 @@ const UserManagement = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   
-  // Diálogo de confirmación
+  // Diálogo de confirmación para eliminar
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  // Función para cargar roles
+  // Cargar roles disponibles (solo una vez al montar)
   const loadRoles = useCallback(async () => {
     try {
       const result = await adminService.getRoles();
@@ -80,16 +80,16 @@ const UserManagement = () => {
     }
   }, []);
 
-  // Función para cargar usuarios
+  // Cargar usuarios según filtros actuales
   const loadUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      // Preparar filtros para enviar al backend
+      // Preparamos los filtros para enviar
       const params = { ...filters };
       
-      // Si rol es 'all', no enviarlo (todos los roles)
+      // Si rol es 'all', lo quitamos (backend espera omitir para traer todos)
       if (params.rol === 'all') {
         delete params.rol;
       }
@@ -109,12 +109,11 @@ const UserManagement = () => {
     }
   }, [filters]);
 
-  // Cargar roles al montar el componente
+  // Efectos de carga inicial
   useEffect(() => {
     loadRoles();
   }, [loadRoles]);
 
-  // Cargar usuarios cuando cambian los filtros
   useEffect(() => {
     loadUsers();
   }, [loadUsers]);
@@ -125,13 +124,14 @@ const UserManagement = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Limpiar error del campo cuando el usuario escribe
     if (formErrors[name]) {
       setFormErrors(prev => ({ ...prev, [name]: null }));
     }
   };
 
   /**
-   * Validar formulario
+   * Validar formulario antes de guardar
    */
   const validateForm = () => {
     const errors = {};
@@ -152,6 +152,7 @@ const UserManagement = () => {
       errors.rol_id = 'El rol es requerido';
     }
     
+    // Solo validar contraseña si es nuevo usuario o si se está cambiando
     if (!editingUser && !formData.password) {
       errors.password = 'La contraseña es requerida';
     } else if (formData.password && formData.password.length < 6) {
@@ -183,8 +184,8 @@ const UserManagement = () => {
         setSuccess(result.message);
         setShowUserModal(false);
         resetForm();
-        loadUsers();
-        setTimeout(() => setSuccess(null), 3000);
+        loadUsers(); // Recargar lista
+        setTimeout(() => setSuccess(null), 3000); // Auto-limpiar mensaje
       } else {
         setError(typeof result.error === 'object' ? JSON.stringify(result.error) : result.error);
       }
@@ -197,7 +198,7 @@ const UserManagement = () => {
   };
 
   /**
-   * Eliminar usuario
+   * Eliminar usuario con confirmación
    */
   const handleDeleteUser = async () => {
     if (!userToDelete) return;
@@ -236,7 +237,7 @@ const UserManagement = () => {
       
       if (result.success) {
         setSuccess(result.message);
-        loadUsers();
+        loadUsers(); // Recargar para ver el cambio
         setTimeout(() => setSuccess(null), 3000);
       } else {
         setError(result.error);
@@ -250,7 +251,7 @@ const UserManagement = () => {
   };
 
   /**
-   * Resetear formulario
+   * Resetear formulario a valores iniciales
    */
   const resetForm = () => {
     setEditingUser(null);
@@ -269,7 +270,7 @@ const UserManagement = () => {
   };
 
   /**
-   * Abrir modal para editar
+   * Abrir modal para editar usuario (carga datos existentes)
    */
   const openEditModal = (user) => {
     setEditingUser(user);
@@ -281,29 +282,23 @@ const UserManagement = () => {
       telefono: user.telefono || '',
       fecha_nacimiento: user.fecha_nacimiento || '',
       rol_id: user.rol_usuario?.id || '',
-      password: '',
+      password: '', // Vacío por seguridad, no mostramos la contraseña actual
       is_active: user.is_active
     });
     setShowUserModal(true);
   };
 
   /**
-   * Manejar cambio en filtro de búsqueda
+   * Manejadores de filtros
    */
   const handleSearchChange = (e) => {
     setFilters(prev => ({ ...prev, search: e.target.value }));
   };
 
-  /**
-   * Manejar cambio en filtro de rol
-   */
   const handleRolChange = (value) => {
     setFilters(prev => ({ ...prev, rol: value }));
   };
 
-  /**
-   * Manejar cambio en filtro de estado
-   */
   const handleActivoChange = (value) => {
     setFilters(prev => ({ 
       ...prev, 
@@ -311,14 +306,11 @@ const UserManagement = () => {
     }));
   };
 
-  /**
-   * Limpiar filtros
-   */
   const clearFilters = () => {
     setFilters({ search: '', rol: 'all', activo: undefined });
   };
 
-  // Renderizado condicional para cuando no hay roles cargados
+  // Renderizado condicional mientras cargan roles
   if (roles.length === 0 && !error) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -358,6 +350,7 @@ const UserManagement = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Búsqueda por texto */}
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
@@ -368,6 +361,7 @@ const UserManagement = () => {
               />
             </div>
             
+            {/* Filtro por rol */}
             <Select
               value={filters.rol}
               onValueChange={handleRolChange}
@@ -385,6 +379,7 @@ const UserManagement = () => {
               </SelectContent>
             </Select>
 
+            {/* Filtro por estado (activo/inactivo) */}
             <Select
               value={filters.activo === undefined ? 'all' : filters.activo.toString()}
               onValueChange={handleActivoChange}
@@ -459,6 +454,7 @@ const UserManagement = () => {
                         </td>
                         <td className="p-3">
                           <div className="flex space-x-2">
+                            {/* Botón editar */}
                             <Button
                               variant="ghost"
                               size="sm"
@@ -468,12 +464,13 @@ const UserManagement = () => {
                               <Edit className="w-4 h-4" />
                             </Button>
                             
+                            {/* Botón activar/desactivar */}
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleToggleActive(user)}
                               title={user.is_active ? 'Desactivar' : 'Activar'}
-                              disabled={user.id === currentUser?.id}
+                              disabled={user.id === currentUser?.id} // No auto-desactivarse
                             >
                               {user.is_active ? (
                                 <ToggleRight className="w-4 h-4 text-green-600" />
@@ -482,6 +479,7 @@ const UserManagement = () => {
                               )}
                             </Button>
                             
+                            {/* Botón eliminar */}
                             <Button
                               variant="ghost"
                               size="sm"
@@ -490,7 +488,7 @@ const UserManagement = () => {
                                 setUserToDelete(user);
                                 setShowDeleteDialog(true);
                               }}
-                              disabled={user.id === currentUser?.id}
+                              disabled={user.id === currentUser?.id} // No auto-eliminarse
                               title="Eliminar"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -518,6 +516,7 @@ const UserManagement = () => {
           
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
+              {/* Campos del formulario */}
               <div className="space-y-2">
                 <Label htmlFor="username">
                   Usuario <span className="text-red-500">*</span>
@@ -635,6 +634,7 @@ const UserManagement = () => {
               </div>
             </div>
 
+            {/* Botones del modal */}
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={() => setShowUserModal(false)}>
                 Cancelar

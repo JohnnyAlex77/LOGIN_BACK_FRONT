@@ -3,11 +3,14 @@ import api from './api';
 class AdminService {
   /**
    * Obtener lista de usuarios con filtros
+   * Los filtros pueden ser: búsqueda por texto, rol, estado activo/inactivo
+   * Construimos los parámetros de la URL dinámicamente
    */
   async getUsers(filters = {}) {
     try {
       const params = new URLSearchParams();
       
+      // Solo agregamos los filtros que vienen definidos
       if (filters.search) params.append('search', filters.search);
       if (filters.rol) params.append('rol', filters.rol);
       if (filters.activo !== undefined) params.append('activo', filters.activo);
@@ -15,8 +18,8 @@ class AdminService {
       const response = await api.get(`/admin/usuarios/?${params.toString()}`);
       return {
         success: true,
-        users: response.data.results,
-        count: response.data.count
+        users: response.data.results,  // Asumimos paginación
+        count: response.data.count      // Total para mostrar en UI
       };
     } catch (error) {
       console.error('Error obteniendo usuarios:', error);
@@ -29,6 +32,7 @@ class AdminService {
 
   /**
    * Obtener un usuario por ID
+   * Útil para ver detalles o editar
    */
   async getUserById(id) {
     try {
@@ -48,6 +52,7 @@ class AdminService {
 
   /**
    * Crear nuevo usuario
+   * Envía todos los datos del formulario al backend
    */
   async createUser(userData) {
     try {
@@ -67,7 +72,8 @@ class AdminService {
   }
 
   /**
-   * Actualizar usuario
+   * Actualizar usuario completo (PUT)
+   * Reemplaza todos los campos del usuario
    */
   async updateUser(id, userData) {
     try {
@@ -87,7 +93,8 @@ class AdminService {
   }
 
   /**
-   * Actualización parcial de usuario
+   * Actualización parcial de usuario (PATCH)
+   * Solo envía los campos que cambiaron, más eficiente
    */
   async partialUpdateUser(id, userData) {
     try {
@@ -108,6 +115,7 @@ class AdminService {
 
   /**
    * Eliminar usuario
+   * Operación destructiva, debería pedir confirmación en UI
    */
   async deleteUser(id) {
     try {
@@ -127,6 +135,7 @@ class AdminService {
 
   /**
    * Activar/desactivar usuario
+   * Endpoint específico para cambiar estado sin tener que enviar todo el usuario
    */
   async toggleUserActive(id) {
     try {
@@ -147,6 +156,7 @@ class AdminService {
 
   /**
    * Obtener roles disponibles
+   * Útil para llenar selects en formularios
    */
   async getRoles() {
     try {
@@ -165,5 +175,6 @@ class AdminService {
   }
 }
 
+// Exportamos una instancia única (patrón Singleton)
 const adminService = new AdminService();
 export default adminService;

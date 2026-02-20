@@ -8,11 +8,12 @@ const EmpresaDashboard = () => {
 
   const handleLogout = async () => {
     await logout();
-    window.location.href = '/login';
+    window.location.href = '/login'; // Forzar recarga completa
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Header con información de la empresa */}
       <header className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -30,6 +31,7 @@ const EmpresaDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Tarjetas de métricas principales */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
@@ -65,6 +67,7 @@ const EmpresaDashboard = () => {
           </Card>
         </div>
 
+        {/* Sección de ofertas laborales */}
         <Card className="mb-8">
           <CardHeader>
             <div className="flex justify-between items-center">
@@ -74,6 +77,7 @@ const EmpresaDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              {/* Ejemplo de oferta 1 */}
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                 <div>
                   <h3 className="font-medium">Desarrollador Django Senior</h3>
@@ -83,6 +87,7 @@ const EmpresaDashboard = () => {
                   Activa
                 </span>
               </div>
+              {/* Ejemplo de oferta 2 */}
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                 <div>
                   <h3 className="font-medium">Frontend React</h3>
@@ -96,6 +101,7 @@ const EmpresaDashboard = () => {
           </CardContent>
         </Card>
 
+        {/* Sección de postulaciones recientes */}
         <Card>
           <CardHeader>
             <CardTitle>Postulaciones Recientes</CardTitle>

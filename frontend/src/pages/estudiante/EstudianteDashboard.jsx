@@ -13,6 +13,7 @@ const EstudianteDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Header con información del estudiante */}
       <header className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -30,6 +31,7 @@ const EstudianteDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Tarjetas de métricas académicas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
@@ -65,6 +67,7 @@ const EstudianteDashboard = () => {
           </Card>
         </div>
 
+        {/* Lista de cursos del estudiante */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Mis Cursos</CardTitle>
@@ -93,6 +96,7 @@ const EstudianteDashboard = () => {
           </CardContent>
         </Card>
 
+        {/* Actividad reciente del estudiante */}
         <Card>
           <CardHeader>
             <CardTitle>Actividad Reciente</CardTitle>

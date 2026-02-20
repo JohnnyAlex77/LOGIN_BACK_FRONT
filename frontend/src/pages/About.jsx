@@ -7,6 +7,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-12">
+        {/* Botón para volver al inicio - mejora la navegación */}
         <div className="mb-8">
           <Link to="/">
             <Button variant="ghost">← Volver al inicio</Button>
@@ -18,6 +19,7 @@ const About = () => {
         </h1>
 
         <div className="prose max-w-4xl">
+          {/* Tarjeta de descripción general */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Descripción del Proyecto</CardTitle>
@@ -35,6 +37,7 @@ const About = () => {
             </CardContent>
           </Card>
 
+          {/* Stack tecnológico detallado */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Stack Tecnológico</CardTitle>
@@ -74,6 +77,7 @@ const About = () => {
             </CardContent>
           </Card>
 
+          {/* Diagrama de arquitectura en ASCII */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Arquitectura</CardTitle>
@@ -101,6 +105,7 @@ const About = () => {
             </CardContent>
           </Card>
 
+          {/* Decisiones de seguridad explicadas */}
           <Card>
             <CardHeader>
               <CardTitle>Decisiones de Seguridad</CardTitle>

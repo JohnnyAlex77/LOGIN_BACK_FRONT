@@ -11,12 +11,15 @@ const Login = () => {
   const navigate = useNavigate();
   const { login, loading } = useAuth();
   
+  // Estado local del formulario
   const [formData, setFormData] = useState({
-    username_email: '',
+    username_email: '',  // Puede ser username o email
     password: ''
   });
   
+  // Errores de validación del formulario
   const [errors, setErrors] = useState({});
+  // Error general de login (credenciales incorrectas, etc.)
   const [loginError, setLoginError] = useState('');
 
   // Manejar cambios en el formulario
@@ -26,18 +29,18 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    // Limpiar error del campo cuando el usuario escribe
+    // Limpiar error del campo cuando el usuario empieza a escribir
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
       }));
     }
-    // Limpiar error general
+    // Limpiar error general también
     if (loginError) setLoginError('');
   };
 
-  // Validar formulario
+  // Validar formulario antes de enviar
   const validateForm = () => {
     const newErrors = {};
     
@@ -62,7 +65,7 @@ const Login = () => {
     const result = await login(formData.username_email, formData.password);
     
     if (result.success) {
-      // Redirigir según rol
+      // Redirigir según el rol del usuario
       const role = result.user?.rol_usuario?.name;
       
       if (role === 'Admin') {
@@ -72,7 +75,7 @@ const Login = () => {
       } else if (role === 'Empresa') {
         navigate('/dashboard/empresa');
       } else {
-        navigate('/'); // Por defecto
+        navigate('/'); // Por si acaso
       }
     } else {
       setLoginError(result.error || 'Error al iniciar sesión');
@@ -92,6 +95,7 @@ const Login = () => {
         </CardHeader>
         
         <CardContent>
+          {/* Mostrar error general si existe */}
           {loginError && (
             <Alert variant="destructive" className="mb-4">
               <AlertDescription>{loginError}</AlertDescription>

@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 const Home = () => {
   const { isAuthenticated, userRole } = useAuth();
 
-  // Determinar dashboard según rol
+  // Función que determina a dónde debe ir el botón principal
+  // Si no está autenticado, va al login
+  // Si está autenticado, va a su dashboard según su rol
   const getDashboardLink = () => {
     if (!isAuthenticated) return '/login';
     
@@ -21,7 +23,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-gray-100">
-      {/* Hero Section */}
+      {/* Hero Section - la parte principal de la landing page */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
@@ -31,6 +33,7 @@ const Home = () => {
             Plataforma integrada para estudiantes, empresas y administradores
           </p>
           
+          {/* Botones de acción principales */}
           <div className="space-x-4">
             <Link to="/about">
               <Button variant="outline" size="lg">
@@ -39,13 +42,14 @@ const Home = () => {
             </Link>
             <Link to={getDashboardLink()}>
               <Button size="lg">
+                {/* El texto del botón cambia según el estado de autenticación */}
                 {isAuthenticated ? 'Ir a Dashboard' : 'Iniciar Sesión'}
               </Button>
             </Link>
           </div>
         </div>
 
-        {/* Stack Tecnológico */}
+        {/* Sección de stack tecnológico - similar a About pero más resumida */}
         <div className="mt-20">
           <h2 className="text-3xl font-semibold text-center mb-10">
             Stack Tecnológico

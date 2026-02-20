@@ -18,6 +18,7 @@ const ProtectedRoute = ({
   const { isAuthenticated, loading, hasAnyRole, userRole } = useAuth();
 
   // Mostrar nada mientras carga (o un spinner)
+  // Esto evita parpadeos y redirecciones prematuras mientras verificamos la autenticación
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -30,6 +31,7 @@ const ProtectedRoute = ({
   }
 
   // Si no está autenticado, redirigir al login
+  // El 'replace' evita que la ruta protegida quede en el historial
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
   }
@@ -42,6 +44,7 @@ const ProtectedRoute = ({
     );
     
     // Redirigir al dashboard que corresponde según su rol
+    // En lugar de mandar al login, lo enviamos a su dashboard principal
     let dashboardRoute = '/';
     if (userRole === 'Admin') dashboardRoute = '/dashboard/admin';
     else if (userRole === 'Estudiante') dashboardRoute = '/dashboard/estudiante';
