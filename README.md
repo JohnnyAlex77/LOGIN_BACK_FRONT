@@ -31,3 +31,8 @@ python manage.py runserver
 cd frontend
 npm install
 npm run dev 
+
+Credenciales de prueba
+Admin: admin / admin123
+Estudiante: estudiante1 / estudiante123
+Empresa: empresa1 / empresa123
