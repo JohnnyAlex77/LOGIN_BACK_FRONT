@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": ".",  // La raíz del proyecto
     "paths": {
-      "@/*": ["./src/*"]
+      // Define alias para que VSCode los entienda y autocomplete
+      "@/*": ["./src/*"]  // @/components  -> ./src/components
+      // Nota: solo definimos @/* porque los demás alias (@components, @pages, etc.)
+      // son redundantes ya que @/* cubre todo dentro de src
     }
   }
 }
