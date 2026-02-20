@@ -20,14 +20,14 @@ Proyecto de autenticación con Django (backend) y React + Vite + Tailwind v4 + s
 
 ## Instalación
 ### Backend
-cd login
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
-python crear_usuarios_prueba.py
-python manage.py runserver
+- cd login
+- python -m venv venv
+- venv\Scripts\activate
+- pip install -r requirements.txt
+- python manage.py migrate
+- python crear_usuarios_prueba.py
+- python manage.py runserver
 ### Frontend
-cd frontend
-npm install
-npm run dev 
+- cd frontend
+- npm install
+- npm run dev 
